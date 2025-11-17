@@ -75,7 +75,8 @@ install_from_source() {
     install_cmd=$3
 
     if ! eval "$check_cmd" >/dev/null 2>&1; then
-        eval "$install_cmd" >/dev/null 2>&1
+        printf "installing %s\n" "$name"
+        eval "$install_cmd"
     fi
 }
 
