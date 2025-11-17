@@ -156,6 +156,13 @@ setup_symlinks() {
     create_symlink "ansible.cfg" ".ansible.cfg"
 }
 
+prime_nvim() {
+    if command -v nvim >/dev/null 2>&1; then
+        parsers="bash dockerfile go gomod gosum json lua markdown markdown_inline python regex rust terraform hcl vim yaml"
+        nvim --headless "+Lazy! sync" "+TSInstallSync $parsers" +qa >/dev/null 2>&1 || true
+    fi
+}
+
 setup_repos() {
     need_sudo
 
@@ -185,6 +192,7 @@ main() {
     install_packages
     setup_tmux
     setup_symlinks
+    prime_nvim
     log "done"
 }
 
