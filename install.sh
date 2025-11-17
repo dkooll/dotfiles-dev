@@ -66,9 +66,8 @@ install_from_source() {
 install_packages() {
     need_sudo
 
-    sudo apt-get install -y -qq build-essential cmake gcc g++ git curl wget
+    sudo apt-get install -y -qq build-essential cmake gcc g++ curl wget
 
-    install_pkg zsh zsh
     install_pkg nodejs node
     install_pkg tmux
     install_pkg ripgrep rg
