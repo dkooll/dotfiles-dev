@@ -165,6 +165,7 @@ setup_symlinks() {
     create_symlink "zsh/.zshrc" ".zshrc"
     create_symlink "tmux/.tmux.conf" ".tmux.conf"
     create_symlink "nvim" ".config/nvim"
+    create_symlink "ansible.cfg" ".ansible.cfg"
 }
 
 main() {
