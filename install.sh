@@ -161,8 +161,8 @@ prime_nvim() {
 }
 
 run_repo_playbook() {
-    if command -v ansible-playbook >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/repo.yml" ]; then
-        ansible-playbook "$DOTFILES_DIR/repo.yml" -vvvv || true
+    if command -v ansible-playbook >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/repos.yml" ]; then
+        ansible-playbook "$DOTFILES_DIR/repos.yml" -vvvv || true
     fi
 }
 
