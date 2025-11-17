@@ -120,9 +120,6 @@ install_packages() {
         if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
             echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
         fi
-        if [ "$SHELL" != "$zsh_path" ]; then
-            chsh -s "$zsh_path" 2>/dev/null || sudo chsh -s "$zsh_path" "$USER" 2>/dev/null || true
-        fi
     fi
 }
 
