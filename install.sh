@@ -119,7 +119,8 @@ install_packages() {
     fi
 
     if ! command -v az >/dev/null 2>&1; then
-        pip3 install --user azure-cli 2>/dev/null || true
+        printf "installing azure-cli\n"
+        pip3 install --user azure-cli --break-system-packages
     fi
 
     if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then

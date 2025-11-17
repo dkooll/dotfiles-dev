@@ -47,6 +47,15 @@ return {
         run_on_start = false,
       })
 
+      -- Auto-install only once on first run
+      local install_flag = vim.fn.stdpath("data") .. "/.mason-installed"
+      if vim.fn.filereadable(install_flag) == 0 then
+        vim.defer_fn(function()
+          require("mason-tool-installer").check_install(true)
+          vim.fn.writefile({}, install_flag)
+        end, 2000)
+      end
+
       -- Load LSP configurations from lsp/ folder
       local lsp_config_path = vim.fn.stdpath("config") .. "/lsp"
       local lsp_servers = {}
