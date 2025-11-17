@@ -38,7 +38,7 @@ setup_repos() {
     check_sudo
 
     sudo apt-get update -qq
-    sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common
+    sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release 2>/dev/null || true
 
     add_repo "nodejs" \
         "test -f /etc/apt/sources.list.d/nodesource.list" \
