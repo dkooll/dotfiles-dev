@@ -1,5 +1,7 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local first_install = false
 if vim.fn.empty(vim.fn.glob(lazypath)) == 1 then
+  first_install = true
   vim.fn.system({
     "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git",
     "--branch=stable", lazypath,
@@ -49,18 +51,16 @@ require("lazy").setup("plugins", {
   debug = false,
 })
 
--- Auto-restart after initial plugin install
-local first_run_flag = vim.fn.stdpath("data") .. "/.lazy-first-run"
-if vim.fn.filereadable(first_run_flag) == 0 then
+-- Auto-quit after initial install
+if first_install then
   vim.api.nvim_create_autocmd("User", {
-    pattern = "LazyInstall",
+    pattern = "VeryLazy",
     once = true,
     callback = function()
-      vim.fn.writefile({}, first_run_flag)
-      vim.notify("Plugins installed. Restarting nvim...", vim.log.levels.INFO)
+      vim.notify("First install complete. Exiting in 3 seconds...", vim.log.levels.WARN)
       vim.defer_fn(function()
-        vim.cmd("qall")
-      end, 2000)
+        vim.cmd("qall!")
+      end, 3000)
     end,
   })
 end
