@@ -146,8 +146,8 @@ create_symlink() {
 setup_symlinks() {
     mkdir -p "$HOME/.config"
 
-    create_symlink "zsh/.zshrc" ".zshrc"
-    create_symlink "tmux/.tmux.conf" ".tmux.conf"
+    create_symlink ".zshrc" ".zshrc"
+    create_symlink ".tmux.conf" ".tmux.conf"
     create_symlink "nvim" ".config/nvim"
     create_symlink "ansible.cfg" ".ansible.cfg"
 }
