@@ -93,6 +93,7 @@ install_packages() {
     install_pkg gh
     install_pkg python3
     install_pkg python3-pip
+    install_pkg ansible
 
     install_from_source "neovim" \
         "command -v nvim" \

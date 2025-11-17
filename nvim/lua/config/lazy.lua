@@ -48,16 +48,3 @@ require("lazy").setup("plugins", {
   },
   debug = false,
 })
-
--- Show restart message after first install
-local first_run_flag = vim.fn.stdpath("data") .. "/.lazy-first-run"
-if vim.fn.filereadable(first_run_flag) == 0 then
-  vim.api.nvim_create_autocmd("User", {
-    pattern = "LazyDone",
-    once = true,
-    callback = function()
-      vim.fn.writefile({}, first_run_flag)
-      vim.cmd('echo "Installation complete. Please restart nvim."')
-    end,
-  })
-end
