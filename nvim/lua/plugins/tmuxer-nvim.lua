@@ -4,7 +4,7 @@ return {
   cmd = { "WorkspaceOpen", "TmuxSessions" },
   config = function()
     require("tmuxer").setup({
-      nvim_alias = "NVIM_APPNAME=nvim-dev nvim",
+      -- nvim_alias = "NVIM_APPNAME=nvim-dev nvim",
       workspaces = {
         {
           name = "workspaces",

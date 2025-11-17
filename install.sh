@@ -1,69 +1,51 @@
 #!/bin/sh
-set -e
+set -eu
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-TARGET_DIR="$HOME/workspaces/dkooll/dotfiles-dev"
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
+TARGET_DIR=${TARGET_DIR:-"$HOME/workspaces/dkooll/dotfiles-dev"}
+DOTFILES_DIR="$TARGET_DIR"
+APT_UPDATED=false
+
+log() { printf "%s\n" "$*"; }
+
+need_sudo() {
+    if ! sudo -n true 2>/dev/null; then
+        log "sudo privileges required"
+        sudo -v
+    fi
+}
+
+apt_update_once() {
+    [ "$APT_UPDATED" = true ] && return
+    need_sudo
+    sudo apt-get update -qq
+    APT_UPDATED=true
+}
 
 ensure_target_dir() {
     if [ "$SCRIPT_DIR" != "$TARGET_DIR" ]; then
         mkdir -p "$(dirname "$TARGET_DIR")"
-        if [ ! -d "$TARGET_DIR" ]; then
-            cp -r "$SCRIPT_DIR" "$TARGET_DIR"
-        fi
+        [ -d "$TARGET_DIR" ] || cp -r "$SCRIPT_DIR" "$TARGET_DIR"
         cd "$TARGET_DIR"
         exec "$TARGET_DIR/install.sh"
     fi
 }
 
-DOTFILES_DIR="$TARGET_DIR"
-
-check_sudo() {
-    if ! sudo -n true 2>/dev/null; then
-        printf "Enter sudo password: "
-        sudo -v
-    fi
-}
-
-add_repo() {
-    repo_name=$1
-    check_cmd=$2
-    add_cmd=$3
-
-    if ! eval "$check_cmd" >/dev/null 2>&1; then
+ensure_repo() {
+    name=$1 file_check=$2 add_cmd=$3
+    if ! eval "$file_check" >/dev/null 2>&1; then
+        need_sudo
+        log "adding repo: $name"
         eval "$add_cmd"
+        APT_UPDATED=false
     fi
-}
-
-setup_repos() {
-    check_sudo
-
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
-
-    if [ ! -f /etc/apt/sources.list.d/nodesource.list ]; then
-        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
-        echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
-        sudo apt-get update -qq
-    fi
-
-    add_repo "gh" \
-        "test -f /etc/apt/keyrings/githubcli-archive-keyring.gpg" \
-        "sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main' | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null"
-
-    add_repo "az" \
-        "test -f /etc/apt/keyrings/microsoft.gpg" \
-        "sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null && sudo chmod go+r /etc/apt/keyrings/microsoft.gpg && echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ bookworm main' | sudo tee /etc/apt/sources.list.d/azure-cli.list >/dev/null"
-
-    add_repo "backports" \
-        "grep -q bookworm-backports /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null" \
-        "echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | sudo tee /etc/apt/sources.list.d/backports.list >/dev/null"
-
-    sudo apt-get update -qq
 }
 
 install_pkg() {
-    pkg=$1
-    if ! command -v "$pkg" >/dev/null 2>&1; then
+    pkg=$1; binary=${2:-$pkg}
+
+    if ! command -v "$binary" >/dev/null 2>&1; then
+        apt_update_once
         sudo apt-get install -y -qq "$pkg" 2>/dev/null || sudo apt-get install -y -qq -t bookworm-backports "$pkg" 2>/dev/null || true
     fi
 }
@@ -80,15 +62,15 @@ install_from_source() {
 }
 
 install_packages() {
-    check_sudo
+    need_sudo
 
     sudo apt-get install -y -qq build-essential cmake gcc g++ git curl wget
 
-    install_pkg zsh
-    install_pkg nodejs
+    install_pkg zsh zsh
+    install_pkg nodejs node
     install_pkg tmux
-    install_pkg ripgrep
-    install_pkg fd-find
+    install_pkg ripgrep rg
+    install_pkg fd-find fdfind
     install_pkg fzf
     install_pkg gh
     install_pkg python3
@@ -170,13 +152,36 @@ setup_symlinks() {
     create_symlink "ansible.cfg" ".ansible.cfg"
 }
 
+setup_repos() {
+    need_sudo
+
+    sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
+
+    ensure_repo "node" \
+        "test -f /etc/apt/sources.list.d/nodesource.list" \
+        "curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg && echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main' | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null"
+
+    ensure_repo "github-cli" \
+        "test -f /etc/apt/keyrings/githubcli-archive-keyring.gpg" \
+        "sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg && echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main' | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null"
+
+    ensure_repo "azure-cli" \
+        "test -f /etc/apt/keyrings/microsoft.gpg" \
+        "sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/keyrings/microsoft.gpg >/dev/null && sudo chmod go+r /etc/apt/keyrings/microsoft.gpg && echo 'deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ bookworm main' | sudo tee /etc/apt/sources.list.d/azure-cli.list >/dev/null"
+
+    ensure_repo "bookworm-backports" \
+        "grep -q bookworm-backports /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null" \
+        "echo 'deb http://deb.debian.org/debian bookworm-backports main contrib non-free' | sudo tee /etc/apt/sources.list.d/backports.list >/dev/null"
+}
+
 main() {
     ensure_target_dir
     setup_repos
+    apt_update_once
     install_packages
     setup_tmux
     setup_symlinks
-    printf "done\n"
+    log "done"
 }
 
 main
