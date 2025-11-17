@@ -152,13 +152,6 @@ setup_symlinks() {
     create_symlink "ansible.cfg" ".ansible.cfg"
 }
 
-prime_nvim() {
-    if command -v nvim >/dev/null 2>&1; then
-        parsers="bash dockerfile go gomod gosum json lua markdown markdown_inline python regex rust terraform hcl vim yaml"
-        nvim --headless "+Lazy! sync" "+TSInstallSync $parsers" +qa >/dev/null 2>&1 || true
-    fi
-}
-
 run_repo_playbook() {
     if command -v ansible-playbook >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/repos.yml" ]; then
         ansible-playbook "$DOTFILES_DIR/repos.yml" -vvvv || true
@@ -194,7 +187,6 @@ main() {
     install_packages
     setup_tmux
     setup_symlinks
-    prime_nvim
     run_repo_playbook
     log "done"
 }
