@@ -45,12 +45,8 @@ return {
         },
         auto_update = false,
         run_on_start = true,
-        start_delay = 3000,
+        start_delay = 1000,
       })
-
-      vim.defer_fn(function()
-        vim.cmd('MasonToolsInstall')
-      end, 100)
 
       -- Load LSP configurations from lsp/ folder
       local lsp_config_path = vim.fn.stdpath("config") .. "/lsp"
