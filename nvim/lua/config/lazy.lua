@@ -18,6 +18,10 @@ require("lazy").setup("plugins", {
     missing = true,
     colorscheme = { "catppuccin" },
   },
+  headless = {
+    task = true,
+    colors = false,
+  },
   performance = {
     cache = {
       enabled = true,
@@ -44,3 +48,19 @@ require("lazy").setup("plugins", {
   },
   debug = false,
 })
+
+-- Auto-restart after initial plugin install
+local first_run_flag = vim.fn.stdpath("data") .. "/.lazy-first-run"
+if vim.fn.filereadable(first_run_flag) == 0 then
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "LazyInstall",
+    once = true,
+    callback = function()
+      vim.fn.writefile({}, first_run_flag)
+      vim.notify("Plugins installed. Restarting nvim...", vim.log.levels.INFO)
+      vim.defer_fn(function()
+        vim.cmd("qall")
+      end, 2000)
+    end,
+  })
+end
