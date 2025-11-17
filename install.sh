@@ -104,11 +104,6 @@ install_packages() {
         . "$HOME/.cargo/env"
     fi
 
-    # if ! command -v az >/dev/null 2>&1; then
-    #     printf "installing azure-cli via pip (apt missing az)\n"
-    #     pip3 install --user azure-cli --break-system-packages || true
-    # fi
-
     if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
         mkdir -p "$HOME/.local/bin"
         ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
