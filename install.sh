@@ -163,6 +163,12 @@ prime_nvim() {
     fi
 }
 
+run_repo_playbook() {
+    if command -v ansible-playbook >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/repo.yml" ]; then
+        ansible-playbook "$DOTFILES_DIR/repo.yml" -vvvv || true
+    fi
+}
+
 setup_repos() {
     need_sudo
 
@@ -193,6 +199,7 @@ main() {
     setup_tmux
     setup_symlinks
     prime_nvim
+    run_repo_playbook
     log "done"
 }
 
