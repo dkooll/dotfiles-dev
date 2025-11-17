@@ -91,9 +91,16 @@ install_packages() {
         "test -d $HOME/.tfenv" \
         "git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv && mkdir -p $HOME/.local/bin && ln -sf $HOME/.tfenv/bin/tfenv $HOME/.local/bin/tfenv && ln -sf $HOME/.tfenv/bin/terraform $HOME/.local/bin/terraform"
 
+    go_arch=$(uname -m)
+    case "$go_arch" in
+        x86_64|amd64) go_arch=amd64 ;;
+        arm64|aarch64) go_arch=arm64 ;;
+        *) go_arch=amd64 ;;
+    esac
+
     install_from_source "go" \
         "test -d /usr/local/go" \
-        "wget -q https://go.dev/dl/\$(curl -s https://go.dev/VERSION?m=text | head -n1).linux-arm64.tar.gz -O /tmp/go.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz"
+        "wget -q https://go.dev/dl/\$(curl -s https://go.dev/VERSION?m=text | head -n1).linux-\${go_arch}.tar.gz -O /tmp/go.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz"
 
     install_from_source "rust" \
         "command -v rustc" \
@@ -152,12 +159,6 @@ setup_symlinks() {
     create_symlink "ansible.cfg" ".ansible.cfg"
 }
 
-run_repo_playbook() {
-    if command -v ansible-playbook >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/repos.yml" ]; then
-        ansible-playbook "$DOTFILES_DIR/repos.yml" -vvvv || true
-    fi
-}
-
 setup_repos() {
     need_sudo
 
@@ -187,7 +188,6 @@ main() {
     install_packages
     setup_tmux
     setup_symlinks
-    run_repo_playbook
     log "done"
 }
 
