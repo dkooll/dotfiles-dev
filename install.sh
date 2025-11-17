@@ -40,7 +40,6 @@ setup_repos() {
     sudo apt-get update -qq
     sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
 
-    # nodejs - manual repo setup to avoid nodesource script issues
     if [ ! -f /etc/apt/sources.list.d/nodesource.list ]; then
         curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
         echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
@@ -107,27 +106,22 @@ install_packages() {
         "test -d $HOME/.tfenv" \
         "git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv && mkdir -p $HOME/.local/bin && ln -sf $HOME/.tfenv/bin/tfenv $HOME/.local/bin/tfenv && ln -sf $HOME/.tfenv/bin/terraform $HOME/.local/bin/terraform"
 
-    # go - latest version
     install_from_source "go" \
         "test -d /usr/local/go" \
         "wget -q https://go.dev/dl/\$(curl -s https://go.dev/VERSION?m=text | head -n1).linux-arm64.tar.gz -O /tmp/go.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz"
 
-    # rust - latest stable
     install_from_source "rust" \
         "command -v rustc" \
         "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable && . $HOME/.cargo/env"
 
-    # source cargo env if rust was just installed
     if [ -f "$HOME/.cargo/env" ]; then
         . "$HOME/.cargo/env"
     fi
 
-    # azure-cli via pip
     if ! command -v az >/dev/null 2>&1; then
         pip3 install --user azure-cli 2>/dev/null || true
     fi
 
-    # fd symlink
     if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
         mkdir -p "$HOME/.local/bin"
         ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
