@@ -130,9 +130,9 @@ install_packages() {
     fi
 
     if command -v npm >/dev/null 2>&1; then
-        npm install -g neovim || true
-        npm install -g @anthropic-ai/claude-cli || true
-        npm install -g @openai/codex || true
+        sudo npm install -g neovim || true
+        sudo npm install -g @anthropic-ai/claude-code || true
+        sudo npm install -g @openai/codex || true
     fi
 
     if [ "$SHELL" != "$(command -v zsh)" ]; then
