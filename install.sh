@@ -78,6 +78,7 @@ install_packages() {
     install_pkg python3
     install_pkg python3-pip
     install_pkg ansible
+    install_pkg azure-cli az
 
     install_from_source "neovim" \
         "command -v nvim" \
@@ -103,10 +104,10 @@ install_packages() {
         . "$HOME/.cargo/env"
     fi
 
-    if ! command -v az >/dev/null 2>&1; then
-        printf "installing azure-cli\n"
-        pip3 install --user azure-cli --break-system-packages
-    fi
+    # if ! command -v az >/dev/null 2>&1; then
+    #     printf "installing azure-cli via pip (apt missing az)\n"
+    #     pip3 install --user azure-cli --break-system-packages || true
+    # fi
 
     if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
         mkdir -p "$HOME/.local/bin"
@@ -119,8 +120,14 @@ install_packages() {
         sudo npm install -g --silent @openai/codex || true
     fi
 
-    if [ "$SHELL" != "$(command -v zsh)" ]; then
-        chsh -s "$(command -v zsh)" 2>/dev/null || true
+    zsh_path=$(command -v zsh || true)
+    if [ -n "$zsh_path" ]; then
+        if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+            echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+        fi
+        if [ "$SHELL" != "$zsh_path" ]; then
+            chsh -s "$zsh_path" 2>/dev/null || sudo chsh -s "$zsh_path" "$USER" 2>/dev/null || true
+        fi
     fi
 }
 
