@@ -40,9 +40,12 @@ setup_repos() {
     sudo apt-get update -qq
     sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
 
-    add_repo "nodejs" \
-        "test -f /etc/apt/sources.list.d/nodesource.list" \
-        "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - >/dev/null 2>&1 || true"
+    # nodejs - manual repo setup to avoid nodesource script issues
+    if [ ! -f /etc/apt/sources.list.d/nodesource.list ]; then
+        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
+        echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+        sudo apt-get update -qq
+    fi
 
     add_repo "gh" \
         "test -f /etc/apt/keyrings/githubcli-archive-keyring.gpg" \
