@@ -1,7 +1,7 @@
 return {
   {
     "williamboman/mason.nvim",
-    event = "VeryLazy",
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       "neovim/nvim-lspconfig",
@@ -46,21 +46,6 @@ return {
         auto_update = false,
         run_on_start = false,
       })
-
-      -- Auto-install tools after setup
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "MasonToolsUpdateCompleted",
-        callback = function()
-          vim.schedule(function()
-            require("mason-tool-installer").check_install(true)
-          end)
-        end,
-      })
-
-      -- Trigger install on startup
-      vim.defer_fn(function()
-        require("mason-tool-installer").check_install(true)
-      end, 2000)
 
       -- Load LSP configurations from lsp/ folder
       local lsp_config_path = vim.fn.stdpath("config") .. "/lsp"
