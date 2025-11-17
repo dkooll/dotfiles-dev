@@ -31,7 +31,7 @@ return {
       function()
         require("tmuxer").open_workspace_popup({
           name = "workspaces",
-          path = "~/Documents/workspaces"
+          path = "~/workspaces"
         })
       end,
       desc = "Tmuxer: Create Tmux Session"
