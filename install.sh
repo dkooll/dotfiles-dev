@@ -102,7 +102,6 @@ install_packages() {
         "test -d /usr/local/go" \
         "wget -q https://go.dev/dl/\$(curl -s https://go.dev/VERSION?m=text | head -n1).linux-\${go_arch}.tar.gz -O /tmp/go.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz"
 
-    # Ensure Go binary is on PATH even for non-login shells
     if [ -x /usr/local/go/bin/go ]; then
         sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go
     fi
