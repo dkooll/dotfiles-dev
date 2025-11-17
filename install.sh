@@ -97,7 +97,7 @@ install_packages() {
 
     install_from_source "neovim" \
         "command -v nvim" \
-        "wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz -O /tmp/nvim.tar.gz && sudo tar -xzf /tmp/nvim.tar.gz -C /opt && sudo ln -sf /opt/nvim-linux64/bin/nvim /usr/local/bin/nvim && rm /tmp/nvim.tar.gz"
+        "wget -q https://github.com/neovim/neovim/releases/latest/download/nvim-linux-arm64.tar.gz -O /tmp/nvim.tar.gz && sudo tar -xzf /tmp/nvim.tar.gz -C /opt && sudo ln -sf /opt/nvim-linux-arm64/bin/nvim /usr/local/bin/nvim && rm /tmp/nvim.tar.gz"
 
     install_from_source "eza" \
         "command -v eza" \
