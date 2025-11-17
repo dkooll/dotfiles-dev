@@ -79,6 +79,7 @@ return {
     },
   },
   config = function(_, opts)
+    vim.opt.cmdheight = 0
     require("nvim-treesitter.configs").setup(opts)
   end,
 }
