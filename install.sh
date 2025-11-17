@@ -42,7 +42,7 @@ setup_repos() {
 
     if [ ! -f /etc/apt/sources.list.d/nodesource.list ]; then
         curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
-        echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+        echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
         sudo apt-get update -qq
     fi
 
@@ -131,6 +131,8 @@ install_packages() {
 
     if command -v npm >/dev/null 2>&1; then
         npm install -g neovim 2>/dev/null || true
+        npm install -g @anthropic-ai/claude-cli 2>/dev/null || true
+        npm install -g @openai/codex 2>/dev/null || true
     fi
 
     if [ "$SHELL" != "$(command -v zsh)" ]; then
