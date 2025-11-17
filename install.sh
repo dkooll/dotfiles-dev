@@ -146,6 +146,11 @@ create_symlink() {
 setup_symlinks() {
     mkdir -p "$HOME/.config"
 
+    # Clean up accidental self-referential link inside repo nvim dir.
+    if [ -L "$DOTFILES_DIR/nvim/nvim" ] && [ "$(readlink -f "$DOTFILES_DIR/nvim/nvim")" = "$(readlink -f "$DOTFILES_DIR/nvim")" ]; then
+        rm -f "$DOTFILES_DIR/nvim/nvim"
+    fi
+
     create_symlink "zsh/.zshrc" ".zshrc"
     create_symlink "tmux/.tmux.conf" ".tmux.conf"
     create_symlink "nvim" ".config/nvim"
