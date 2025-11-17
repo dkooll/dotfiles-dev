@@ -51,6 +51,7 @@ return {
       local install_flag = vim.fn.stdpath("data") .. "/.mason-installed"
       if vim.fn.filereadable(install_flag) == 0 then
         vim.defer_fn(function()
+          vim.o.cmdheight = 0
           require("mason-tool-installer").check_install(true)
           vim.fn.writefile({}, install_flag)
         end, 2000)
