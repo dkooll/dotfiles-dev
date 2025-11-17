@@ -24,10 +24,12 @@ apt_update_once() {
 
 ensure_target_dir() {
     if [ "$SCRIPT_DIR" != "$TARGET_DIR" ]; then
-        mkdir -p "$(dirname "$TARGET_DIR")"
-        [ -d "$TARGET_DIR" ] || cp -r "$SCRIPT_DIR" "$TARGET_DIR"
-        cd "$TARGET_DIR"
-        exec "$TARGET_DIR/install.sh"
+        if [ -d "$TARGET_DIR" ]; then
+            cd "$TARGET_DIR"
+        else
+            log "TARGET_DIR ($TARGET_DIR) not found; clone repo there or set TARGET_DIR"
+            exit 1
+        fi
     fi
 }
 
@@ -112,9 +114,9 @@ install_packages() {
     fi
 
     if command -v npm >/dev/null 2>&1; then
-        sudo npm install -g neovim || true
-        sudo npm install -g @anthropic-ai/claude-code || true
-        sudo npm install -g @openai/codex || true
+        sudo npm install -g --silent neovim || true
+        sudo npm install -g --silent @anthropic-ai/claude-code || true
+        sudo npm install -g --silent @openai/codex || true
     fi
 
     if [ "$SHELL" != "$(command -v zsh)" ]; then

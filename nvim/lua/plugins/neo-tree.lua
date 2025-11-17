@@ -85,6 +85,8 @@ return {
           "build",
           "dist",
         },
+        -- Hide the self-referential nvim -> .../nvim symlink inside the repo.
+        hide_by_pattern = { "*/nvim/nvim" },
         never_show = {
           ".DS_Store",
           "thumbs.db",
