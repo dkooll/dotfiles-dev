@@ -115,7 +115,12 @@ install_packages() {
     # rust - latest stable
     install_from_source "rust" \
         "command -v rustc" \
-        "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable"
+        "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable && . $HOME/.cargo/env"
+
+    # source cargo env if rust was just installed
+    if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+    fi
 
     # azure-cli via pip
     if ! command -v az >/dev/null 2>&1; then
