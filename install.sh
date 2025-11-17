@@ -42,7 +42,7 @@ setup_repos() {
 
     add_repo "nodejs" \
         "test -f /etc/apt/sources.list.d/nodesource.list" \
-        "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -"
+        "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - 2>&1 | grep -v 'software-properties-common' || true"
 
     add_repo "gh" \
         "test -f /etc/apt/keyrings/githubcli-archive-keyring.gpg" \
