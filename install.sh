@@ -30,10 +30,10 @@ setup_repos() {
     sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
 
     [[ -f /etc/apt/sources.list.d/nodesource.list ]] || {
-        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
-        echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main' | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null
+        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg && \
+        echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main' | sudo tee /etc/apt/sources.list.d/nodesource.list >/dev/null && \
         APT_UPDATED=false
-    }
+    } || log "warning: failed to add nodesource repo"
 
     [[ -f /etc/apt/keyrings/githubcli-archive-keyring.gpg ]] || {
         sudo mkdir -p /etc/apt/keyrings
