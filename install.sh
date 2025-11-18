@@ -91,6 +91,17 @@ install_packages() {
         "test -d $HOME/.tfenv" \
         "git clone --depth=1 https://github.com/tfutils/tfenv.git $HOME/.tfenv && mkdir -p $HOME/.local/bin && ln -sf $HOME/.tfenv/bin/tfenv $HOME/.local/bin/tfenv && ln -sf $HOME/.tfenv/bin/terraform $HOME/.local/bin/terraform"
 
+    # Install latest terraform using tfenv
+    if command -v tfenv &> /dev/null || test -f "$HOME/.local/bin/tfenv"; then
+        if ! "$HOME/.local/bin/tfenv" list 2>/dev/null | grep -q .; then
+            log "INFO" "Installing latest Terraform via tfenv..."
+            "$HOME/.local/bin/tfenv" install latest
+            "$HOME/.local/bin/tfenv" use latest
+        else
+            log "OK" "Terraform already installed via tfenv"
+        fi
+    fi
+
     go_arch=$(uname -m)
     case "$go_arch" in
         x86_64|amd64) go_arch=amd64 ;;
