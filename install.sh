@@ -29,11 +29,6 @@ install_source() {
 setup_repos() {
     sudo apt-get install -y -qq apt-transport-https ca-certificates curl gnupg lsb-release
 
-    [[ -f /etc/apt/sources.list.d/nodesource.list ]] || {
-        curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && \
-        APT_UPDATED=false
-    } || log "warning: failed to add nodesource repo"
-
     [[ -f /etc/apt/keyrings/githubcli-archive-keyring.gpg ]] || {
         sudo mkdir -p /etc/apt/keyrings
         curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
@@ -59,7 +54,6 @@ setup_repos() {
 install_packages() {
     sudo apt-get install -y -qq build-essential cmake gcc g++ curl wget unzip git
 
-    install_pkg nodejs node
     install_pkg tmux
     install_pkg ripgrep rg
     install_pkg fd-find fdfind
@@ -103,6 +97,21 @@ install_packages() {
         "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable"
 
     [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+    install_source "fnm" "command -v fnm" \
+        "curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell"
+
+    # Setup fnm and install Node.js 22
+    export FNM_DIR="$HOME/.local/share/fnm"
+    if [[ -d "$FNM_DIR" ]]; then
+        export PATH="$FNM_DIR:$PATH"
+        eval "$(fnm env)"
+        if ! fnm list 2>/dev/null | grep -q "v22"; then
+            log "installing node 22 via fnm"
+            fnm install 22
+            fnm default 22
+        fi
+    fi
 
     if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
         mkdir -p "$HOME/.local/bin"

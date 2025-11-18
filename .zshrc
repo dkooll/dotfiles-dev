@@ -4,6 +4,10 @@ export GOROOT="/usr/local/go"
 export GOPATH="$HOME/go"
 export PATH="$GOROOT/bin:$GOPATH/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# fnm (Node.js version manager)
+export FNM_DIR="$HOME/.local/share/fnm"
+[[ -d "$FNM_DIR" ]] && export PATH="$FNM_DIR:$PATH" && eval "$(fnm env --use-on-cd)"
 export GREP_OPTIONS="--color=never"
 export TF_CLI_ARGS="-no-color"
 export EZA_COLORS="di=38;5;109:fi=38;5;132:*.*=38;5;132:Makefile=38;5;132:README=38;5;132:Dockerfile=38;5;132:da=none:un=38;5;109:gu=38;5;109:uu=38;5;109:ur=38;5;187:uw=38;5;187:ux=38;5;187:gr=38;5;187:gw=38;5;187:gx=38;5;187:tr=38;5;187:tw=38;5;175:tx=38;5;187:sn=none:sb=none:hd=none:lp=none:cc=none:mi=none:pi=none:so=none:bd=none:cd=none:or=none:su=none:sf=none:ow=38;5;187:st=38;5;187"
