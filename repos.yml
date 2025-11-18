@@ -57,6 +57,7 @@
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-ais.git', dest: 'terraform-azure-ais' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-ci.git', dest: 'terraform-azure-ci' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-cog.git', dest: 'terraform-azure-cog' }
+      - { repo: 'https://github.com/CloudNationHQ/terraform-azure-dbw.git', dest: 'terraform-azure-dbw' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-locations.git', dest: 'terraform-azure-locations' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-mcf.git', dest: 'terraform-azure-mcf' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-azure-ng.git', dest: 'terraform-azure-ng' }
@@ -70,6 +71,34 @@
       - { repo: 'https://github.com/CloudNationHQ/terraform-databricks-cl.git', dest: 'terraform-databricks-cl' }
       - { repo: 'https://github.com/CloudNationHQ/terraform-databricks-clp.git', dest: 'terraform-databricks-clp' }
       - { repo: 'https://github.com/CloudNationHQ/well-architected-modules.git', dest: 'well-architected-modules' }
+
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Clone repositories
+      git:
+        repo: "{{ item.repo }}"
+        dest: "{{ path }}/{{ item.dest }}"
+        version: "{{ item.version | default('main') }}"
+        update: yes
+        force: no
+      loop: "{{ repo_list }}"
+
+- name: Clone dkooll repositories
+  hosts: localhost
+  vars:
+    path: "{{ lookup('env', 'HOME') }}/workspaces/dkooll"
+    repo_list:
+      - { repo: 'https://github.com/dkooll/tmuxer.nvim.git', dest: 'tmuxer.nvim' }
+      - { repo: 'https://github.com/dkooll/validor.git', dest: 'validor' }
+      - { repo: 'https://github.com/dkooll/wamcp.git', dest: 'wamcp' }
+      - { repo: 'https://github.com/dkooll/diffy.nvim.git', dest: 'diffy.nvim' }
+      - { repo: 'https://github.com/dkooll/diffy.git', dest: 'diffy' }
+      - { repo: 'https://github.com/dkooll/markparsr.git', dest: 'markparsr' }
+      - { repo: 'https://github.com/dkooll/issuor.git', dest: 'issuor' }
+      - { repo: 'https://github.com/dkooll/bouncer.nvim.git', dest: 'bouncer.nvim' }
+      - { repo: 'https://github.com/dkooll/rusty.git', dest: 'rusty' }
 
   connection: local
   gather_facts: no
