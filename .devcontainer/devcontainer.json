@@ -1,0 +1,13 @@
+{
+  "name": "dotfiles-dev",
+  "image": "debian:bookworm",
+  "postCreateCommand": "apt-get update && apt-get install -y sudo git && curl -fsSL https://raw.githubusercontent.com/dkooll/dotfiles-dev/main/bootstrap.sh | bash",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  }
+}
