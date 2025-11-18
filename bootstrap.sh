@@ -4,9 +4,11 @@ set -eu
 REPO_URL="https://github.com/dkooll/dotfiles-dev.git"
 TARGET_DIR="$HOME/workspaces/dkooll/dotfiles-dev"
 
+sudo timedatectl set-ntp true 2>/dev/null || true
+
 command -v git &>/dev/null && command -v zsh &>/dev/null || sudo apt update && sudo apt install -y git zsh
 
-[[ "$SHELL" == *zsh ]] || chsh -s "$(which zsh)"
+[[ "$SHELL" == *zsh ]] || sudo chsh -s "$(which zsh)" "$USER"
 
 mkdir -p "$(dirname "$TARGET_DIR")"
 [[ -d "$TARGET_DIR/.git" ]] && git -C "$TARGET_DIR" pull --ff-only || git clone "$REPO_URL" "$TARGET_DIR"
