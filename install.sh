@@ -117,8 +117,10 @@ install_packages() {
         ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
     fi
 
-    if command -v npm &>/dev/null; then
-        sudo npm install -g --silent neovim @anthropic-ai/claude-code @openai/codex || true
+    if [[ -d "$FNM_DIR" ]] && command -v fnm &>/dev/null; then
+        eval "$(fnm env)"
+        fnm use 22 || true
+        npm install -g --silent neovim @anthropic-ai/claude-code @openai/codex || true
     fi
 
     local zsh_path
