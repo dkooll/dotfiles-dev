@@ -101,7 +101,6 @@ install_packages() {
     install_source "fnm" "command -v fnm" \
         "curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell"
 
-    # Setup fnm and install Node.js 22
     export FNM_DIR="$HOME/.local/share/fnm"
     if [[ -d "$FNM_DIR" ]]; then
         export PATH="$FNM_DIR:$PATH"
