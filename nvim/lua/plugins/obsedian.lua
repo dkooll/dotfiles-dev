@@ -33,10 +33,10 @@ return {
   },
 
   config = function()
-    local NOTES_PATH_PATTERN = "Documents/.*%-notes"
+    local NOTES_PATH_PATTERN = "obsedian%-notes"
     local WORKSPACES = {
-      { name = "tech",    path = "~/Documents/tech-notes" },
-      { name = "worship", path = "~/Documents/worship-notes" },
+      { name = "tech",    path = "/home/dev/workspaces/dkooll/obsedian-notes/tech" },
+      { name = "worship", path = "/home/dev/workspaces/dkooll/obsedian-notes/worship" },
     }
 
     local highlights = {
